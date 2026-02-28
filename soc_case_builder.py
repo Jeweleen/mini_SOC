@@ -1,6 +1,8 @@
 import requests
 import os
-from enum import Enum
+from artifact import Artifact
+from case import Case
+
 
 API_URL = "https://my.api.mockaroo.com/ironclad-soc-case-artifacts"
 
@@ -27,25 +29,29 @@ else:
     print("Unexpected JSON structure. Expected a list of records.")
     raise SystemExit
 
-'''if isinstance(data[0], dict):
-    print("\nFields in record:")
-    for k in data[0].keys():
-       print("-", k)'''
+#Removed if statment to print the values for Field Records in Step 2.
 
-##Create Enum for Severity and Status
+#Creating an artifact object, updating with case input.
+cases = {}
 
-class Severity(Enum):
-    LOW = "LOW"
-    MEDIUM = "MEDIUM"
-    HIGH = "HIGH"
+for record in data:
+    if not isinstance(record, dict):
+        continue
 
-class CaseStatus(Enum):
-    NEW = "NEW"
-    INVESTIGATING = "INVESTIGATING"
-    RESOLVED = "RESOLVED"
-    FALSE_POSITIVE = "FALSE_POSITIVE"
-from artifact import Artifact
-#Creating an artifact object
-if isinstance(data[0], dict):
-    test_artifact = Artifact(data[0])
-    print(test_artifact)
+    artifact = Artifact(record)
+    cid = artifact.case_id
+
+    if cid not in cases:
+        cases[cid] = Case(cid)
+
+    cases[cid].add_artifact(artifact)
+
+# print all cases
+print("\n=== Case Summaries ===")
+for case in cases.values():
+    print(case.summary())
+   
+    
+
+    
+    

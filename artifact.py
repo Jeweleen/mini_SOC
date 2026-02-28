@@ -18,19 +18,15 @@ class Artifact:
         return self.ip.startswith(("10.", "192.168."))
 
     def __str__(self) -> str:
-        #extra = f" ({self.comment})" if self.comment else ""
-        #return f"{self.indicator_type}: {self.file_hash}{extra}"
-        ## I will need to check to see which indicator_type, based on that it will print the value
-        
         extra = f" ({self.comment})" if self.comment else ""
+        return f"{self.indicator_type}: {self.value}{extra}"
 
+    @property
+    def value(self) -> str:
         if self.indicator_type == "domain":
-            val = self.domain
-        elif self.indicator_type == "ip":
-            val = self.ip
-        elif self.indicator_type == "file_hash":
-            val = self.file_hash
-        else:
-            val = ""
-
-        return f"{self.indicator_type}: {val}{extra}"
+            return self.domain
+        if self.indicator_type == "ip":
+            return self.ip
+        if self.indicator_type == "file_hash":
+            return self.file_hash
+        return ""
